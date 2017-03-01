@@ -32,15 +32,17 @@ sub run {
     my $x1 = undef;
     my $x2 = undef;
 
-    my $d = $b_value**2-4*$a_value*$c_value;
     if ($a_value == 0) {
       print "No solution!\n";
-    } elsif ($d < 0) {
-      print "No solution!\n";
     } else {
-      $x1 = (-$b_value + sqrt($d))/(2*$a_value);
-      $x2 = (-$b_value - sqrt($d))/(2*$a_value);
-      print "$x1, $x2\n";
+      my $d = $b_value**2-4*$a_value*$c_value;
+      if ($d < 0) {
+        print "No solution!\n";
+      } else {
+        $x1 = (-$b_value + sqrt($d))/(2*$a_value);
+        $x2 = (-$b_value - sqrt($d))/(2*$a_value);
+        print "$x1, $x2\n";
+      }
     }
 }
 1;

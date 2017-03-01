@@ -28,11 +28,10 @@ sub run {
     my $num = 0;
 
     while ($x % 2 == 0) {
-      $x = $x / 2;
+      $x = $x >> 1;
       $num++;
     }
 
     print "$num\n";
 }
-
 1;
