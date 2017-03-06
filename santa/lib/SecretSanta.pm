@@ -18,7 +18,7 @@ sub calculate {
 			$pairs{$#list} = $i;
 		}
 	}
-	if ($#members < 3) {
+	if (($#members <= 3) && ($#list < 4)) {
 		return @res;
 	}
 	my @num = 0..$#list;
