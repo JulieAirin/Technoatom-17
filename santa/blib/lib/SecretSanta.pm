@@ -18,6 +18,9 @@ sub calculate {
 			$pairs{$#list} = $i;
 		}
 	}
+	if ($#members < 3) {
+		return @res;
+	}
 	my @num = 0..$#list;
 	my $ok = 0;
 	while (!$ok) {
