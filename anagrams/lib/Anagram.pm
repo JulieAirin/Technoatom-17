@@ -52,8 +52,9 @@ sub anagram {
 
     for my $x (@{$words_list}) {
       $x = lc (decode('utf8',$x));
+      $x = lc $x;
       my $charstr = join '', sort split '', $x;
-      push @{ $preresult{$charstr} }, $x;
+      push @{ $preresult{$charstr} }, encode('utf8', $x);
     }
 
     for my $x (keys %preresult) {
