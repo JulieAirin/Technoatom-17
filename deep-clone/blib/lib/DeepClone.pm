@@ -36,39 +36,38 @@ use DDP;
 =cut
 
 my $allisok = 1;
-my $depth = 0;
 
 sub clone {
 	my $orig = shift;
 	my $cloned;
 
-	p $orig;
-	return $orig;
 	if (ref($orig) eq 'ARRAY') {
-		#print "ARRAY\n";
 		for my $x (@{$orig}) {
-			push @{$cloned}, clone($x);
+			if ($x eq $orig) {
+				push @{$cloned}, $cloned;
+			} else {
+				push @{$cloned}, clone($x);
+			}
 		}
 	} elsif (ref($orig) eq 'HASH') {
-		#print "HASH\n";
 		for my $x (keys %{$orig}) {
-			${$cloned}{$x} = clone(${$orig}{$x});
+			if (${$orig}{$x} eq $orig) {
+				${$cloned}{$x} = $cloned;
+			} else {
+				${$cloned}{$x} = clone(${$orig}{$x});
+			}
 		}
 	} elsif (ref(\$orig) eq 'SCALAR') {
-		#print "SCALAR\n";
 		$cloned = $orig;
 	} elsif (!$orig) {
-		#print "undef\n";
 		$cloned = undef;
 	} else {
-		#print "oops\n";
 		$allisok = 0;
 	}
+
 	if ($allisok)	{
-		$depth--;
 		return $cloned;
 	} else {
-		$depth--;
 		return undef;
 	}
 }

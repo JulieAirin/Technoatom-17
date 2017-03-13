@@ -43,11 +43,19 @@ sub clone {
 
 	if (ref($orig) eq 'ARRAY') {
 		for my $x (@{$orig}) {
-			push @{$cloned}, clone($x);
+			if ($x eq $orig) {
+				push @{$cloned}, $cloned;
+			} else {
+				push @{$cloned}, clone($x);
+			}
 		}
 	} elsif (ref($orig) eq 'HASH') {
 		for my $x (keys %{$orig}) {
-			${$cloned}{$x} = clone(${$orig}{$x});
+			if (${$orig}{$x} eq $orig) {
+				${$cloned}{$x} = $cloned;
+			} else {
+				${$cloned}{$x} = clone(${$orig}{$x});
+			}
 		}
 	} elsif (ref(\$orig) eq 'SCALAR') {
 		$cloned = $orig;
