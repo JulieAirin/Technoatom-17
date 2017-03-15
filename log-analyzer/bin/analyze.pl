@@ -81,7 +81,6 @@ sub report {
     }
     ${$table{total}}{avg} = ${$table{total}}{count}*60/(${$table{total}}{max}-${$table{total}}{min});
 
-    p %table;
     print "IP\tcount\tavg\tdata\t";
     my @statuses;
     for my $x (keys %{$table{total}}) {
@@ -91,7 +90,7 @@ sub report {
     }
     @statuses = sort @statuses;
     for my $x (@statuses) {
-      print "data_$x\t";
+      print "$x\t";
     }
     print "\n";
 
