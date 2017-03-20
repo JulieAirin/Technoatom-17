@@ -21,30 +21,12 @@ use Data::Dumper;
 local $Data::Dumper::Indent = 0;
 
 #replace $orig value with your structure
-my $orig   = {
-    a => [ 1, 2, 3 ],
-    b => { c => 4, d => 5 },
-    e => [
-        {
-            k1 => 'v1',
-            k2 => [ qw/a b c/],
-            k3 => undef,
-            k4 => { kk1 => 'x', kk2 => 'y' },
-        },
-        [ qw/x1 x2 x3/ ],
-        undef,
-        1, 2, 3, qw/a b c/,
-    ],
-    f => {
-        k1 => 'v1',
-        k2 => [ qw/a b c/ ],
-        k3 => undef,
-        k4 => { kk1 => 'x', kk2 => 'y', kk3 => [ qw/a b c/ ], kk4 => { a => 1, b => 2 } },
-    },
-    g => 1,
-    h => 'string',
-    i => undef,
-};
+my $CYCLE_ARRAY = [ 1, 2, 3 ];
+$CYCLE_ARRAY->[4] = $CYCLE_ARRAY;
+$CYCLE_ARRAY->[5] = $CYCLE_ARRAY;
+$CYCLE_ARRAY->[6] = [ 1, 2, 3, [ { 1 => $CYCLE_ARRAY } ] ];
+$CYCLE_ARRAY->[7] = $CYCLE_ARRAY->[6][3];
+my $orig = $CYCLE_ARRAY;
 my $cloned = DeepClone::clone($orig);
 
 say "ORIGINAL ", Dumper($orig);

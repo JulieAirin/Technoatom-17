@@ -36,26 +36,37 @@ use DDP;
 =cut
 
 my $allisok = 1;
+my %arefs; # {$orig => $cloned}
+my %hrefs;
 
 sub clone {
 	my $orig = shift;
 	my $cloned;
 
+	say "ORIGINAL ", Dumper($orig);
+	say "CLONED   ", Dumper($cloned);
+	#p %arefs;
+	#p %hrefs;
+
 	if (ref($orig) eq 'ARRAY') {
-		for my $x (@{$orig}) {
-			if ($x eq $orig) {
-				push @{$cloned}, $cloned;
-			} else {
+		if (exists $arefs{$orig}) {
+			$cloned = $arefs{$orig};
+		} else {
+			for my $x (@{$orig}) {
+				$arefs{$orig} = $cloned;
 				push @{$cloned}, clone($x);
 			}
+			$arefs{$orig} = $cloned;
 		}
 	} elsif (ref($orig) eq 'HASH') {
-		for my $x (keys %{$orig}) {
-			if (${$orig}{$x} eq $orig) {
-				${$cloned}{$x} = $cloned;
-			} else {
+		if (exists $hrefs{$orig}) {
+			$cloned = $hrefs{$orig};
+		} else {
+			for my $x (keys %{$orig}) {
+				$hrefs{$orig} = $cloned;
 				${$cloned}{$x} = clone(${$orig}{$x});
 			}
+			$hrefs{$orig} = $cloned;
 		}
 	} elsif (ref(\$orig) eq 'SCALAR') {
 		$cloned = $orig;
