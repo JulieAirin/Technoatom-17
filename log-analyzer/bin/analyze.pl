@@ -32,12 +32,12 @@ sub parse_file {
         \"(?<Coef>(\d+(\.\d+)?)|\-)\"
         $/x;
         $time = timelocal($+{sec},$+{min},$+{hour},$+{mday},mon($+{mon}),$+{year} );
-        if (($+{Status} == 200) && ($+{Coef} ne "-")) {
-          push @{${$result}{$+{IP}}{data}}, $+{ZData}*$+{Coef};
-        }
         push @{${$result}{$+{IP}}{time}}, $time;
-        push @{${$result}{$+{IP}}{zdata}}, $+{ZData};
+        push @{${$result}{$+{IP}}{zdata}}, $+{ZData}/1024;
         push @{${$result}{$+{IP}}{status}}, $+{Status};
+        if (($+{Status} == 200) && ($+{Coef} ne "-")) {
+          push @{${$result}{$+{IP}}{data}}, $+{ZData}*$+{Coef}/1024;
+        }
     }
     close $fd;
     return $result;
@@ -57,6 +57,10 @@ sub report {
       ${$table{$x}}{count} = scalar @{${$result}{$x}{time}};
       $min = min(@{${$result}{$x}{time}});
       $max = max(@{${$result}{$x}{time}});
+      if (scalar @{${$result}{$x}{time}} > 4) {
+        p @{${$result}{$x}{time}};
+        print "$min\n";
+      }
       if ($max != $min) {
         ${$table{$x}}{avg} = ${$table{$x}}{count}*60/($max-$min);
       } else {
@@ -94,24 +98,28 @@ sub report {
     }
     print "\n";
 
-    print "total\t${$table{total}}{count}\t".(sprintf "%.0f", ${$table{total}}{avg})."\t";
-    print (sprintf "%.0f", ${$table{total}}{data})."\t";
+    print "total\t${$table{total}}{count}\t".(sprintf "%.02f", ${$table{total}}{avg})."\t";
+    print int ${$table{total}}{data};
+    print "\t";
     for my $x (@statuses) {
-      print "${$table{total}}{$x}\t";
+      print int ${$table{total}}{$x};
+      print "\t";
     }
     print "\n";
 
     for my $i (0..9) {
       my $ip = $list[$i];
-      print "$ip\t${$table{$ip}}{count}\t".(sprintf "%.0f", ${$table{$ip}}{avg})."\t";
+      print "$ip\t${$table{$ip}}{count}\t".(sprintf "%.02f", ${$table{$ip}}{avg})."\t";
       if (exists ${$table{$ip}}{data}) {
-        print (sprintf "%.0f", ${$table{$ip}}{data})."\t";
+        print int ${$table{$ip}}{data};
+        print "\t";
       } else {
         print "0\t";
       }
       for my $x (@statuses) {
         if (exists ${$table{$ip}}{$x}) {
-          print "${$table{$ip}}{$x}\t";
+          print int ${$table{$ip}}{$x};
+          print "\t";
         } else {
           print "0\t";
         }
